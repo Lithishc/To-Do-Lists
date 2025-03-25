@@ -1,0 +1,130 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Centering the app */
+body {
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container for the To-Do List */
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Task input area */
+.task-input {
+    display: flex;
+    gap: 10px;
+}
+
+.task-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.task-input button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.task-input button:hover {
+    background: #218838;
+}
+
+/* Task list */
+#taskList {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Task text */
+.task-item span {
+    flex: 1;
+    padding: 0 10px;
+}
+
+/* Completed task */
+.task-item.completed span {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* Buttons for edit and delete */
+.task-item button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px;
+}
+
+/* Edit button */
+.edit-btn {
+    color: #ffc107;
+}
+
+.edit-btn:hover {
+    color: #d39e00;
+}
+
+/* Delete button */
+.delete-btn {
+    color: #dc3545;
+}
+
+.delete-btn:hover {
+    color: #a71d2a;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+    }
+    
+    .task-input {
+        flex-direction: column;
+    }
+    
+    .task-input input, .task-input button {
+        width: 100%;
+    }
+}
