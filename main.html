@@ -3,24 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+    <title>To-Do List App</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>To-Do List</h1>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2>Menu</h2>
+            <input type="text" placeholder="Search">
+            <div class="menu-section">
+                <h3>Tasks</h3>
+                <ul>
+                    <li>📅 Upcoming <span id="upcoming-count">0</span></li>
+                    <li class="active">✅ Today <span id="today-count">0</span></li>
+                </ul>
+            </div>
+            <div class="menu-section">
+                <h3>Lists</h3>
+                <ul>
+                    <li>🟠 Personal <span id="personal-count">0</span></li>
+                    <li>🔵 Work <span id="work-count">0</span></li>
+                    <li>➕ Add New List</li>
+                </ul>                
+            </div>
+            <div class="tag-section">
+                <label>Tags:</label>
+                <div class="tag-container"></div>
+                <input type="text" class="tag-input" placeholder="Enter tag..." onkeypress="addTag(event)">
+                <button class="add-tag-btn">Add Tag</button>
+            </div>
+        </aside>
 
-        <div class="task-input">
-            <input type="text" id="taskInput" placeholder="Enter a new task">
-            <button id="addTask">Add Task</button>
-        </div>
+        <!-- Main Content -->
+        <main class="task-section">
+            <h1>Today <span class="task-count">0</span></h1>
+            <ul class="task-list"></ul>
+        </main>
 
-        <ul id="taskList">
-            <!-- Tasks will be added dynamically here -->
-        </ul>
+        <!-- Task Details Section -->
+        <section class="task-details">
+            <h2>Task:</h2>
+            <input type="text" class="task-title" placeholder="Enter Task">
+            <textarea class="task-desc" placeholder="Description"></textarea>
+            <div class="task-options">
+                <label>List:</label>
+                <select class="task-list-dropdown">
+                    <option value="Personal">Personal</option>
+                    <option value="Work">Work</option>
+                </select>
+                <label>Due Date:</label>
+                <input type="date" class="task-due-date">
+                <label>Tags:</label>
+                <div class="tag-container"></div>
+            </div>
+            <div class="task-actions">
+                <button class="delete-task">🗑 Delete Task</button>
+                <button class="save-task">💾 Add Task</button>
+            </div>
+        </section>
     </div>
 
-    <script src="script.js"></script> <!-- Link to external JavaScript -->
+<script src="script.js"></script>
 </body>
 </html>

@@ -1,86 +1,99 @@
-document.addEventListener("DOMContentLoaded", loadTasks);
+document.addEventListener("DOMContentLoaded", function () {
+    // Selectors
+    const taskList = document.querySelector(".task-list");
+    const taskInput = document.querySelector(".task-title");
+    const taskDesc = document.querySelector(".task-desc");
+    const taskListDropdown = document.querySelector(".task-list-dropdown");
+    const taskDueDate = document.querySelector(".task-due-date");
+    const taskAddButton = document.querySelector(".save-task");
+    const tagInput = document.querySelector(".tag-input");
+    const tagContainer = document.querySelector(".tag-container");
 
-function addTask() {
-    let taskInput = document.getElementById("taskInput").value;
-    let priority = document.getElementById("priority").value;
-    let dueDate = document.getElementById("dueDate").value;
-    if (taskInput === "") return alert("Task cannot be empty");
-    
-    let task = { text: taskInput, priority, dueDate, completed: false, subtasks: [] };
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    tasks.push(task);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    
-    document.getElementById("taskInput").value = "";
-    loadTasks();
-}
+    let editingIndex = null;
 
-function loadTasks() {
-    let taskList = document.getElementById("taskList");
-    taskList.innerHTML = "";
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    // Function to update Local Storage
+    function updateLocalStorage() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
 
-    tasks.forEach((task, index) => {
-        // Ensure subtasks is always an array
-        if (!task.subtasks) {
-            task.subtasks = [];
+    // Function to update task counts
+    function updateTaskCounts() {
+        const today = new Date().toISOString().split('T')[0];
+
+        document.getElementById("today-count").textContent = tasks.filter(task => task.dueDate === today).length;
+        document.getElementById("upcoming-count").textContent = tasks.filter(task => task.dueDate > today).length;
+        document.getElementById("personal-count").textContent = tasks.filter(task => task.list === "Personal").length;
+        document.getElementById("work-count").textContent = tasks.filter(task => task.list === "Work").length;
+    }
+
+    // Function to render tasks
+    function renderTasks() {
+        taskList.innerHTML = "";
+        tasks.forEach((task, index) => {
+            const taskItem = document.createElement("li");
+            taskItem.innerHTML = `
+                <input type="checkbox" ${task.completed ? "checked" : ""} data-index="${index}">
+                <strong>${task.title}</strong> - <small>(${task.list})</small> - Due: ${task.dueDate || "No Date"}
+                <button class="edit-task" data-index="${index}">✏</button>
+                <button class="delete-task" data-index="${index}">🗑</button>
+            `;
+            taskList.appendChild(taskItem);
+        });
+
+        updateLocalStorage();
+        updateTaskCounts();
+    }
+
+    // Add or update a task
+    taskAddButton.addEventListener("click", function () {
+        const title = taskInput.value.trim();
+        const description = taskDesc.value.trim();
+        const list = taskListDropdown.value;
+        const dueDate = taskDueDate.value;
+
+        if (title === "") {
+            alert("Task title cannot be empty!");
+            return;
         }
 
-        let li = document.createElement("li");
-        li.innerHTML = `
-            <span onclick="editTask(${index})">${task.text} (Priority: ${task.priority}) - Due: ${task.dueDate}</span>
-            <button onclick="deleteTask(${index})">Delete</button>
-            <button onclick="toggleComplete(${index})">${task.completed ? 'Undo' : 'Complete'}</button>
-            <button onclick="addSubtask(${index})">Add Subtask</button>
-            <ul id="subtasks-${index}">
-                ${task.subtasks.map((sub, i) => `<li>${sub} <button onclick="deleteSubtask(${index}, ${i})">X</button></li>`).join('')}
-            </ul>
-        `;
-        taskList.appendChild(li);
+        if (editingIndex !== null) {
+            tasks[editingIndex] = { title, description, completed: false, list, dueDate };
+            editingIndex = null;
+            taskAddButton.textContent = "💾 Add Task";
+        } else {
+            tasks.push({ title, description, completed: false, list, dueDate });
+        }
+
+        taskInput.value = "";
+        taskDesc.value = "";
+        taskDueDate.value = "";
+        renderTasks();
     });
 
-    // Save the fixed tasks back to localStorage
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+    // Delete a task
+    taskList.addEventListener("click", function (e) {
+        if (e.target.classList.contains("delete-task")) {
+            const index = e.target.getAttribute("data-index");
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+    });
 
+    // Edit a task
+    taskList.addEventListener("click", function (e) {
+        if (e.target.classList.contains("edit-task")) {
+            const index = e.target.getAttribute("data-index");
+            taskInput.value = tasks[index].title;
+            taskDesc.value = tasks[index].description || "";
+            taskListDropdown.value = tasks[index].list;
+            taskDueDate.value = tasks[index].dueDate || "";
 
-function deleteTask(index) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    tasks.splice(index, 1);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    loadTasks();
-}
+            taskAddButton.textContent = "💾 Save Task";
+            editingIndex = index;
+        }
+    });
 
-function editTask(index) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    let newTaskText = prompt("Edit task:", tasks[index].text);
-    if (newTaskText !== null) {
-        tasks[index].text = newTaskText;
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-        loadTasks();
-    }
-}
-
-function toggleComplete(index) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    tasks[index].completed = !tasks[index].completed;
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    loadTasks();
-}
-
-function addSubtask(index) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    let subtaskText = prompt("Enter subtask:");
-    if (subtaskText) {
-        tasks[index].subtasks.push(subtaskText);
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-        loadTasks();
-    }
-}
-
-function deleteSubtask(taskIndex, subtaskIndex) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    tasks[taskIndex].subtasks.splice(subtaskIndex, 1);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    loadTasks();
-}
+    // Load tasks on page load
+    renderTasks();
+});

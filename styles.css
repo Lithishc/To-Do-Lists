@@ -1,4 +1,4 @@
-/* Reset default styles */
+/* General Styles */
 * {
     margin: 0;
     padding: 0;
@@ -6,125 +6,361 @@
     font-family: Arial, sans-serif;
 }
 
-/* Centering the app */
+/* Layout */
 body {
-    background-color: #f4f4f4;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    background-color: #f4f4f4;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
-/* Container for the To-Do List */
+/* Main Container */
 .container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    height: 100vh;
     background: white;
-    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
 }
 
-/* Title */
-h1 {
-    text-align: center;
-    color: #333;
+/* Sidebar */
+.sidebar {
+    width: 20%;
+    background: #f9f9f9;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+    margin-bottom: 10px;
+}
+
+.sidebar input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.menu-section {
     margin-bottom: 20px;
 }
 
-/* Task input area */
-.task-input {
-    display: flex;
-    gap: 10px;
-}
-
-.task-input input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.menu-section h3 {
     font-size: 16px;
+    margin-bottom: 5px;
+    color: #333;
 }
 
-.task-input button {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.task-input button:hover {
-    background: #218838;
-}
-
-/* Task list */
-#taskList {
+.menu-section ul {
     list-style: none;
-    margin-top: 20px;
 }
 
-.task-item {
+.menu-section li {
+    padding: 8px;
+    cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    background: #fff;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    align-items: center;
 }
 
-/* Task text */
-.task-item span {
-    flex: 1;
-    padding: 0 10px;
+.menu-section li:hover,
+.menu-section li.active {
+    background: #ddd;
+    border-radius: 5px;
 }
 
-/* Completed task */
-.task-item.completed span {
-    text-decoration: line-through;
-    color: #888;
-}
-
-/* Buttons for edit and delete */
-.task-item button {
-    background: none;
+/* Style for the Add Tag button */
+.add-tag-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
     border: none;
     cursor: pointer;
     font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.add-tag-btn:hover {
+    background: #0056b3;
+}
+
+/* Icon inside button */
+.add-tag-btn::before {
+    content: "➕";
+    margin-right: 5px;
+}
+
+/* Tag container */
+.tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+/* Style for gym tag in sidebar */
+.tag-container .tag {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+/* Tag chip */
+.tag-chip {
+    background: #17a2b8;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+.selected-tag, .task-options .tag {
+    background-color: #007bff !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.tag-chip .remove-tag {
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+}
+.tag-chip .remove-tag:hover {
+    color: #ff0000;
+}
+
+/* Input field for adding tags */
+.tag-input {
+    display: none;
+    margin-top: 5px;
     padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-/* Edit button */
-.edit-btn {
-    color: #ffc107;
+
+/* Task Section */
+.task-section {
+    width: 50%;
+    padding: 20px;
 }
 
-.edit-btn:hover {
-    color: #d39e00;
+.task-title {
+    width: 100%;
+    height: 40px;  /* Adjust height as needed */
+    resize: none;  /* Prevent resizing */
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
 }
 
-/* Delete button */
-.delete-btn {
-    color: #dc3545;
+
+.task-list .edit-task, .task-list .delete-task {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-.delete-btn:hover {
-    color: #a71d2a;
+.task-list .edit-task {
+    color: #007bff;
 }
 
-/* Responsive design */
-@media (max-width: 480px) {
-    .container {
-        width: 90%;
+.task-list li {
+    display: flex;
+    justify-content: space-between; /* Push buttons to the right */
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+}
+
+.task-list li input[type="checkbox"] {
+    flex-shrink: 0; /* Prevents checkbox from resizing */
+}
+
+.task-list li .task-text {
+    flex-grow: 1; /* Allows text to take available space */
+    white-space: nowrap; /* Keeps text on one line */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds '...' if text overflows */
+}
+
+.task-list li .task-label {
+    background: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap; /* Prevents wrapping */
+    flex-shrink: 0; /* Ensures label doesn’t resize */
+}
+
+
+.task-list li span {
+    text-align: left;
+    flex-grow: 1; /* Allows text to take full width */
+}
+.task-list .highlighted {
+    background: #ffefef;
+}
+
+
+
+/* Task Details */
+/* Task Details Section */
+.task-details {
+    width: 30%;
+    padding: 20px;
+    background: #f9f9f9;
+    border-left: 1px solid #ddd;
+}
+
+/* Input fields */
+.task-details input,
+.task-details textarea,
+.task-details select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    font-size: 14px;
+    color: #333;
+}
+
+/* List Dropdown */
+.task-details select {
+    appearance: none;
+    cursor: pointer;
+}
+
+.task-details select:focus {
+    border-color: #007bff;
+    outline: none;
+    background: #f9f9f9;
+}
+
+/* Tags */
+.task-options .tag {
+    display: inline-block;
+    background: #e0e0e0;
+    color: #333;
+    padding: 6px 12px;
+    margin: 5px 5px 0 0;
+    border-radius: 15px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.task-options .tag:hover {
+    background: #d6d6d6;
+}
+
+.add-tag {
+    background: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.add-tag:hover {
+    background: #0056b3;
+}
+/* Style for selected tags in the task section */
+.selected-tag {
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-right: 5px;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Hover effect */
+.selected-tag:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+/* Task Actions (Buttons) */
+.task-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.task-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Delete Task Button - Softer */
+.delete-task {
+    background: #ffcccc;
+    color: #b30000;
+}
+
+.delete-task:hover {
+    background: #ff9999;
+}
+
+/* Save/ADD Button - Softer */
+.save-task {
+    background: #ffea99;
+    color: #664d00;
+}
+
+.save-task:hover {
+    background: #ffe066;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 25%;
     }
-    
-    .task-input {
+    .task-details {
+        width: 35%;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
         flex-direction: column;
     }
-    
-    .task-input input, .task-input button {
+    .sidebar, .task-details {
         width: 100%;
+        height: auto;
+    }
+    .task-section {
+        width: 100%;
+        height: auto;
     }
 }
