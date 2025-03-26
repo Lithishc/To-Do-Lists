@@ -16,8 +16,10 @@
             <div class="menu-section">
                 <h3>Tasks</h3>
                 <ul>
-                    <li>📅 Upcoming <span id="upcoming-count">0</span></li>
+                    <li>📅 ALL Tasks <span id="all-tasks">0</span></li>
                     <li class="active">✅ Today <span id="today-count">0</span></li>
+                    <li>📅 Upcoming <span id="upcoming-count">0</span></li>
+                    
                 </ul>
             </div>
             <div class="menu-section">
@@ -28,12 +30,8 @@
                     <li>➕ Add New List</li>
                 </ul>                
             </div>
-            <div class="tag-section">
-                <label>Tags:</label>
-                <div class="tag-container"></div>
-                <input type="text" class="tag-input" placeholder="Enter tag..." onkeypress="addTag(event)">
-                <button class="add-tag-btn">Add Tag</button>
-            </div>
+            
+                       
         </aside>
 
         <!-- Main Content -->
@@ -55,12 +53,10 @@
                 </select>
                 <label>Due Date:</label>
                 <input type="date" class="task-due-date">
-                <label>Tags:</label>
-                <div class="tag-container"></div>
             </div>
             <div class="task-actions">
-                <button class="delete-task">🗑 Delete Task</button>
-                <button class="save-task">💾 Add Task</button>
+                <button class="delete-task">Delete Task</button>
+                <button class="save-task">Add Task</button>
             </div>
         </section>
     </div>

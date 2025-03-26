@@ -6,44 +6,94 @@ document.addEventListener("DOMContentLoaded", function () {
     const taskListDropdown = document.querySelector(".task-list-dropdown");
     const taskDueDate = document.querySelector(".task-due-date");
     const taskAddButton = document.querySelector(".save-task");
-    const tagInput = document.querySelector(".tag-input");
-    const tagContainer = document.querySelector(".tag-container");
+    const menuTagInput = document.querySelector(".menu-tag-input"); // Ensure this selector matches your HTML structure
 
+    let currentView = "Today"; // Default view is "Today"
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     let editingIndex = null;
-
-    // Function to update Local Storage
-    function updateLocalStorage() {
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
 
     // Function to update task counts
     function updateTaskCounts() {
         const today = new Date().toISOString().split('T')[0];
 
+        // Update counts for Today, Upcoming, Personal, and Work
         document.getElementById("today-count").textContent = tasks.filter(task => task.dueDate === today).length;
         document.getElementById("upcoming-count").textContent = tasks.filter(task => task.dueDate > today).length;
         document.getElementById("personal-count").textContent = tasks.filter(task => task.list === "Personal").length;
         document.getElementById("work-count").textContent = tasks.filter(task => task.list === "Work").length;
+
+        // Update the total task count
+        document.getElementById("all-tasks").textContent = tasks.length;
     }
 
-    // Function to render tasks
     function renderTasks() {
         taskList.innerHTML = "";
-        tasks.forEach((task, index) => {
+    
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+    
+        // Filter tasks based on the current view
+        let filteredTasks = tasks;
+        if (currentView === "Today") {
+            filteredTasks = tasks.filter(task => task.dueDate === today);
+        } else if (currentView === "Upcoming") {
+            filteredTasks = tasks.filter(task => task.dueDate > today);
+        }
+    
+        // Check if there are no tasks to display
+        if (filteredTasks.length === 0) {
+            taskList.innerHTML = `<li class="no-tasks">No tasks to display. Add a new task!</li>`;
+            return;
+        }
+    
+        // Render the filtered tasks
+        filteredTasks.forEach((task, index) => {
             const taskItem = document.createElement("li");
+            taskItem.classList.add("task-item");
             taskItem.innerHTML = `
-                <input type="checkbox" ${task.completed ? "checked" : ""} data-index="${index}">
-                <strong>${task.title}</strong> - <small>(${task.list})</small> - Due: ${task.dueDate || "No Date"}
-                <button class="edit-task" data-index="${index}">✏</button>
-                <button class="delete-task" data-index="${index}">🗑</button>
+                <div class="task-main">
+                    <input type="checkbox" ${task.completed ? "checked" : ""} data-index="${index}">
+                    <div class="task-info">
+                        <span class="task-text">${task.title}</span>
+                        <div class="task-meta">
+                            <span class="due-date">${task.dueDate || "No Date"}</span>
+                            <span class="list-tag">${task.list}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="edit-task" data-index="${index}">Edit</button>
+                    <button class="delete-task" data-index="${index}">🗑</button>
+                </div>
             `;
             taskList.appendChild(taskItem);
         });
-
-        updateLocalStorage();
+    
+        // Update task counts after rendering
         updateTaskCounts();
     }
+
+    document.querySelectorAll(".menu-section ul li").forEach(menuItem => {
+        menuItem.addEventListener("click", function () {
+            // Remove the "active" class from all menu items
+            document.querySelectorAll(".menu-section ul li").forEach(item => item.classList.remove("active"));
+
+            // Add the "active" class to the clicked menu item
+            this.classList.add("active");
+
+            // Update the current view based on the clicked menu item
+            if (this.textContent.includes("Today")) {
+                currentView = "Today";
+            } else if (this.textContent.includes("Upcoming")) {
+                currentView = "Upcoming";
+            } else {
+                currentView = "All Tasks";
+            }
+
+            // Re-render tasks based on the new view
+            renderTasks();
+        });
+    });
 
     // Add or update a task
     taskAddButton.addEventListener("click", function () {
@@ -73,8 +123,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Delete a task
     taskList.addEventListener("click", function (e) {
-        if (e.target.classList.contains("delete-task")) {
-            const index = e.target.getAttribute("data-index");
+        if (e.target.matches(".delete-task")) {
+            const taskElement = e.target.closest(".task-item"); // Find closest task container
+            const index = taskElement.dataset.index; // Use dataset instead of getAttribute
             tasks.splice(index, 1);
             renderTasks();
         }
@@ -89,11 +140,18 @@ document.addEventListener("DOMContentLoaded", function () {
             taskListDropdown.value = tasks[index].list;
             taskDueDate.value = tasks[index].dueDate || "";
 
-            taskAddButton.textContent = "💾 Save Task";
+            taskAddButton.textContent = "Save Task";
             editingIndex = index;
         }
     });
 
-    // Load tasks on page load
+    // Attach event listeners
+    if (menuTagInput) {
+        menuTagInput.addEventListener("keypress", addMenuTag);
+    }
+
+    // Load tasks and tags on page load
+    renderMenuTags();
+    syncTaskTags();
     renderTasks();
 });
