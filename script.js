@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
                 <div class="task-actions">
                     <button class="edit-task" data-index="${index}">✏️Edit</button>
-                    <button class="delete-task" data-index="${index}">🗑</button>
+                    <button class="delete-task" data-index="${index}" style="color: red; font-weight: bold;">🗑</button>
                 </div>
             `;
     
@@ -298,6 +298,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Event listener for search input
     searchInput.addEventListener("input", searchTasks);
+
+    // Show task details in input fields when clicking a task
+    taskList.addEventListener("click", function (e) {
+        const taskItem = e.target.closest(".task-item");
+        if (taskItem && !e.target.classList.contains("edit-task") && !e.target.classList.contains("delete-task")) {
+            const index = Array.from(taskList.children).indexOf(taskItem);
+            const task = tasks[index];
+
+            taskInput.value = task.title;
+            taskDesc.value = task.description || "";
+            taskListDropdown.value = task.list;
+            taskDueDate.value = task.dueDate || "";
+
+            taskAddButton.textContent = "Update Task";
+            editingIndex = index;
+        }
+    });
 
     // Initial render
     loadTasksFromLocalStorage(); // Load and display stored tasks

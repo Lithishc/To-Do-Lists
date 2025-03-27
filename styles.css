@@ -68,7 +68,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
+    margin-bottom: 1px;
     cursor: pointer;
     transition: background 0.3s ease;
 }
@@ -193,7 +194,7 @@ body {
     border-radius: 15px;
     padding: 5px 10px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .task-item .edit-task {
@@ -332,6 +333,20 @@ body {
 
 .save-task:hover {
     background: #ffe066;
+}
+
+/* Task item hover effect */
+.task-item {
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.task-item:hover {
+    background-color: #f4f4f4;
+    transform: scale(1.02);
+    cursor: pointer;
+    border-radius: 10px;
 }
 
 /* Responsive Design */
