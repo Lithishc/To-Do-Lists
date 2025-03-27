@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     let editingIndex = null;
 
+    const addNewListButton = document.querySelector(".add-new-list"); // "Add New List" button
+    const listMenu = document.querySelector(".menu-section ul:nth-child(2)"); // List menu
+    let lists = ["Personal", "Work"]; // Default lists
+
     // Save tasks to localStorage
     function saveTasksToLocalStorage() {
         localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -42,14 +46,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to get filtered tasks based on the current view
     function getFilteredTasks() {
         const today = new Date().toISOString().split('T')[0];
+    
         if (currentView === "Today") {
             return tasks.filter(task => task.dueDate === today);
         } else if (currentView === "Upcoming") {
             return tasks.filter(task => task.dueDate > today);
+        } else if (lists.includes(currentView)) { // If viewing a specific list
+            return tasks.filter(task => task.list === currentView);
         } else {
-            return tasks; // "All Tasks" view
+            return tasks; // Default to showing all tasks
         }
     }
+    
 
     // Function to render tasks
     function renderTasks() {
@@ -90,6 +98,63 @@ document.addEventListener("DOMContentLoaded", function () {
         updateTaskCounts();
     }
 
+    // Function to render lists in the sidebar and dropdown
+    function renderLists() {
+        listMenu.innerHTML = `
+            <li>🟠 Personal <span id="personal-count">0</span></li>
+            <li>🔵 Work <span id="work-count">0</span></li>
+            <li class="add-new-list">➕ Add New List</li>
+        `;
+
+        // Add new lists dynamically
+        lists.forEach((list, index) => {
+            if (index > 1) { // Skip default lists
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${list} <span id="${list.toLowerCase()}-count">0</span>`;
+                listMenu.insertBefore(listItem, listMenu.lastChild);
+            }
+        });
+
+        // Update dropdown options
+        taskListDropdown.innerHTML = lists.map(list => `<option value="${list}">${list}</option>`).join("");
+
+        // Reattach event listener for "Add New List"
+        attachAddNewListListener();
+    }
+
+    // Function to attach event listener for "Add New List"
+    function attachAddNewListListener() {
+        const addNewListButton = document.querySelector(".add-new-list");
+        addNewListButton.addEventListener("click", function () {
+            const inputField = document.createElement("input");
+            inputField.type = "text";
+            inputField.placeholder = "Enter new list name";
+            inputField.classList.add("new-list-input");
+
+            const saveButton = document.createElement("button");
+            saveButton.textContent = "Save";
+            saveButton.classList.add("save-new-list");
+
+            // Replace the "Add New List" button with the input and save button
+            addNewListButton.replaceWith(inputField);
+            listMenu.appendChild(saveButton);
+
+            // Save the new list
+            saveButton.addEventListener("click", function () {
+                const newListName = inputField.value.trim();
+                if (newListName && !lists.includes(newListName)) {
+                    lists.push(newListName);
+                    renderLists();
+                } else if (lists.includes(newListName)) {
+                    alert("This list already exists!");
+                }
+                inputField.remove();
+                saveButton.remove();
+                renderLists();
+            });
+        });
+    }
+
     // Event listener for menu navigation
     document.querySelectorAll(".menu-section ul li").forEach(menuItem => {
         menuItem.addEventListener("click", function () {
@@ -104,6 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentView = "Today";
             } else if (this.textContent.includes("Upcoming")) {
                 currentView = "Upcoming";
+            } else if (this.textContent.includes("Personal")) {
+                currentView = "Personal";
+            } else if (this.textContent.includes("Work")) {
+                currentView = "Work";
             } else {
                 currentView = "All Tasks";
             }
@@ -168,9 +237,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Update task completion status
+    taskList.addEventListener("change", function (e) {
+        if (e.target.type === "checkbox") {
+            const index = e.target.dataset.index;
+            tasks[index].completed = e.target.checked;
+            saveTasksToLocalStorage();
+            renderTasks();
+        }
+    });
+
     // Initial render
     renderMenuTags();
     syncTaskTags();
     renderTasks();
+    renderLists();
 });
-   

@@ -120,6 +120,16 @@ body {
     gap: 10px; /* Add spacing between elements */
 }
 
+.task-main input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.task-main input[type="checkbox"]:hover {
+    transform: scale(1.2);
+}
 .task-item .task-main {
     display: flex;
     align-items: center; /* Align checkbox and task info to the center */
@@ -342,6 +352,31 @@ body {
     font-size: 14px;
 }
 
+/* New List Input */
+.new-list-input {
+    width: 80%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Save New List Button */
+.save-new-list {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.save-new-list:hover {
+    background-color: #0056b3;
+}
 
 /* Delete Task Button */
 .delete-task {
