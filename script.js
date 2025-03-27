@@ -300,21 +300,23 @@ document.addEventListener("DOMContentLoaded", function () {
     searchInput.addEventListener("input", searchTasks);
 
     // Show task details in input fields when clicking a task
-    taskList.addEventListener("click", function (e) {
-        const taskItem = e.target.closest(".task-item");
-        if (taskItem && !e.target.classList.contains("edit-task") && !e.target.classList.contains("delete-task")) {
-            const index = Array.from(taskList.children).indexOf(taskItem);
-            const task = tasks[index];
+// Show task details in input fields when clicking a task
+taskList.addEventListener("click", function (e) {
+    const taskItem = e.target.closest(".task-item");
+    if (taskItem && !e.target.classList.contains("edit-task") && !e.target.classList.contains("delete-task")) {
+        const index = taskItem.querySelector("input[type='checkbox']").dataset.index; // Use data-index
+        const task = tasks[index];
 
-            taskInput.value = task.title;
-            taskDesc.value = task.description || "";
-            taskListDropdown.value = task.list;
-            taskDueDate.value = task.dueDate || "";
+        // Populate the input fields with the task details
+        taskInput.value = task.title;
+        taskDesc.value = task.description || "";
+        taskListDropdown.value = task.list;
+        taskDueDate.value = task.dueDate || "";
 
-            taskAddButton.textContent = "Update Task";
-            editingIndex = index;
-        }
-    });
+        taskAddButton.textContent = "Update Task";
+        editingIndex = index;
+    }
+});
 
     // Initial render
     loadTasksFromLocalStorage(); // Load and display stored tasks

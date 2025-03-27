@@ -219,9 +219,10 @@ body {
     padding: 20px;
     background: #f9f9f9;
     border-left: 1px solid #ddd;
+    margin-bottom: 20px;
 }
 
-.task-details h2 {
+.task-details h1 {
     font-size: 18px;
     margin-bottom: 10px;
 }
