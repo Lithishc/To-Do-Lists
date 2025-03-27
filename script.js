@@ -6,20 +6,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const taskListDropdown = document.querySelector(".task-list-dropdown");
     const taskDueDate = document.querySelector(".task-due-date");
     const taskAddButton = document.querySelector(".save-task");
-    const menuTagInput = document.querySelector(".menu-tag-input");
-    const sectionTitle = document.querySelector(".task-section h1"); // Section title
+    const taskDeleteButton = document.querySelector(".delete-task");
+    const sectionTitle = document.querySelector(".task-section h1"); 
     const todayCount = document.getElementById("today-count");
     const upcomingCount = document.getElementById("upcoming-count");
     const personalCount = document.getElementById("personal-count");
     const workCount = document.getElementById("work-count");
+    const completed = document.getElementById("completed-count");
     const allTasksCount = document.getElementById("all-tasks");
+    const searchInput = document.getElementById("search-task"); // Search bar selector
 
     let currentView = "Today"; // Default view is "Today"
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     let editingIndex = null;
-
-    const addNewListButton = document.querySelector(".add-new-list"); // "Add New List" button
-    const listMenu = document.querySelector(".menu-section ul:nth-child(2)"); // List menu
     let lists = ["Personal", "Work"]; // Default lists
 
     // Save tasks to localStorage
@@ -30,57 +29,67 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to update task counts
     function updateTaskCounts() {
         const today = new Date().toISOString().split('T')[0];
-
-        // Update counts for Today, Upcoming, Personal, Work, and All Tasks
-        todayCount.textContent = tasks.filter(task => task.dueDate === today).length;
-        upcomingCount.textContent = tasks.filter(task => task.dueDate > today).length;
-        personalCount.textContent = tasks.filter(task => task.list === "Personal").length;
-        workCount.textContent = tasks.filter(task => task.list === "Work").length;
-        allTasksCount.textContent = tasks.length;
-
-        // Update the task count in the section title
-        const filteredTasks = getFilteredTasks();
-        sectionTitle.querySelector(".task-count").textContent = filteredTasks.length;
+    
+        //Exclude completed tasks from all sections except "Completed"
+        todayCount.textContent = tasks.filter(task => task.dueDate === today && !task.completed).length;
+        upcomingCount.textContent = tasks.filter(task => task.dueDate > today && !task.completed).length;
+        personalCount.textContent = tasks.filter(task => task.list === "Personal" && !task.completed).length;
+        workCount.textContent = tasks.filter(task => task.list === "Work" && !task.completed).length;
+        completed.textContent = tasks.filter(task => task.completed).length; 
+        allTasksCount.textContent = tasks.filter(task => !task.completed).length; 
+    
+        //Update the task count in the section title dynamically
+        if (sectionTitle.querySelector(".task-count")) {
+            sectionTitle.querySelector(".task-count").textContent = getFilteredTasks().length;
+        }
     }
+    
+    
 
     // Function to get filtered tasks based on the current view
     function getFilteredTasks() {
         const today = new Date().toISOString().split('T')[0];
     
         if (currentView === "Today") {
-            return tasks.filter(task => task.dueDate === today);
+            return tasks.filter(task => task.dueDate === today && !task.completed); // ✅ Exclude completed tasks
         } else if (currentView === "Upcoming") {
-            return tasks.filter(task => task.dueDate > today);
-        } else if (lists.includes(currentView)) { // If viewing a specific list
-            return tasks.filter(task => task.list === currentView);
+            return tasks.filter(task => task.dueDate > today && !task.completed); // ✅ Exclude completed tasks
+        } else if (currentView === "Completed") { 
+            return tasks.filter(task => task.completed); // ✅ Only show completed tasks
+        } else if (lists.includes(currentView)) {
+            return tasks.filter(task => task.list === currentView && !task.completed); // ✅ Exclude completed
         } else {
-            return tasks; // Default to showing all tasks
+            return tasks.filter(task => !task.completed); // ✅ Exclude completed from "All Tasks"
         }
     }
+    
+    
     
 
     // Function to render tasks
     function renderTasks() {
         taskList.innerHTML = "";
-
         const filteredTasks = getFilteredTasks();
-
-        // Check if there are no tasks to display
+    
         if (filteredTasks.length === 0) {
             taskList.innerHTML = `<li class="no-tasks">No tasks to display. Add a new task!</li>`;
             updateTaskCounts();
             return;
         }
-
-        // Render the filtered tasks
+    
         filteredTasks.forEach((task, index) => {
             const taskItem = document.createElement("li");
             taskItem.classList.add("task-item");
+    
+            if (task.completed) {
+                taskItem.classList.add("completed-task"); // ✅ Styling for completed tasks
+            }
+    
             taskItem.innerHTML = `
                 <div class="task-main">
                     <input type="checkbox" ${task.completed ? "checked" : ""} data-index="${index}">
                     <div class="task-info">
-                        <span class="task-text">${task.title}</span>
+                        <span class="task-text ${task.completed ? "completed-text" : ""}">${task.title}</span>
                         <div class="task-meta">
                             <span class="due-date">${task.dueDate || "No Date"}</span>
                             <span class="list-tag">${task.list}</span>
@@ -88,73 +97,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button class="edit-task" data-index="${index}">Edit</button>
+                    <button class="edit-task" data-index="${index}">✏️Edit</button>
                     <button class="delete-task" data-index="${index}">🗑</button>
                 </div>
             `;
+    
             taskList.appendChild(taskItem);
         });
-
+    
         updateTaskCounts();
     }
-
-    // Function to render lists in the sidebar and dropdown
-    function renderLists() {
-        listMenu.innerHTML = `
-            <li>🟠 Personal <span id="personal-count">0</span></li>
-            <li>🔵 Work <span id="work-count">0</span></li>
-            <li class="add-new-list">➕ Add New List</li>
-        `;
-
-        // Add new lists dynamically
-        lists.forEach((list, index) => {
-            if (index > 1) { // Skip default lists
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `${list} <span id="${list.toLowerCase()}-count">0</span>`;
-                listMenu.insertBefore(listItem, listMenu.lastChild);
-            }
-        });
-
-        // Update dropdown options
-        taskListDropdown.innerHTML = lists.map(list => `<option value="${list}">${list}</option>`).join("");
-
-        // Reattach event listener for "Add New List"
-        attachAddNewListListener();
-    }
-
-    // Function to attach event listener for "Add New List"
-    function attachAddNewListListener() {
-        const addNewListButton = document.querySelector(".add-new-list");
-        addNewListButton.addEventListener("click", function () {
-            const inputField = document.createElement("input");
-            inputField.type = "text";
-            inputField.placeholder = "Enter new list name";
-            inputField.classList.add("new-list-input");
-
-            const saveButton = document.createElement("button");
-            saveButton.textContent = "Save";
-            saveButton.classList.add("save-new-list");
-
-            // Replace the "Add New List" button with the input and save button
-            addNewListButton.replaceWith(inputField);
-            listMenu.appendChild(saveButton);
-
-            // Save the new list
-            saveButton.addEventListener("click", function () {
-                const newListName = inputField.value.trim();
-                if (newListName && !lists.includes(newListName)) {
-                    lists.push(newListName);
-                    renderLists();
-                } else if (lists.includes(newListName)) {
-                    alert("This list already exists!");
-                }
-                inputField.remove();
-                saveButton.remove();
-                renderLists();
-            });
-        });
-    }
-
+    
+    
     // Event listener for menu navigation
     document.querySelectorAll(".menu-section ul li").forEach(menuItem => {
         menuItem.addEventListener("click", function () {
@@ -173,7 +127,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentView = "Personal";
             } else if (this.textContent.includes("Work")) {
                 currentView = "Work";
-            } else {
+            } else if (this.textContent.includes("Completed")) {
+                currentView = "Completed";
+            }else {
                 currentView = "All Tasks";
             }
 
@@ -200,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (editingIndex !== null) {
             tasks[editingIndex] = { title, description, completed: false, list, dueDate };
             editingIndex = null;
-            taskAddButton.textContent = "💾 Add Task";
+            taskAddButton.textContent = "Add Task";
         } else {
             tasks.push({ title, description, completed: false, list, dueDate });
         }
@@ -212,16 +168,35 @@ document.addEventListener("DOMContentLoaded", function () {
         renderTasks();
     });
 
+    //Delete button
+    taskDeleteButton.addEventListener("click", function () {
+        if (editingIndex !== null) {
+            tasks.splice(editingIndex, 1);
+            saveTasksToLocalStorage();
+            renderTasks();
+            updateSectionTitle();
+            
+            // Clear the input fields
+            taskInput.value = "";
+            taskDesc.value = "";
+            taskDueDate.value = "";
+            taskListDropdown.value = lists[0]; // Reset dropdown to default
+            taskAddButton.textContent = "Add Task"; // Reset button text
+            editingIndex = null; // Reset editing mode
+        }
+    });
+
     // Delete a task
     taskList.addEventListener("click", function (e) {
-        if (e.target.matches(".delete-task")) {
-            const taskElement = e.target.closest(".task-item");
-            const index = taskElement.dataset.index;
+        if (e.target.classList.contains("delete-task")) {
+            const index = e.target.getAttribute("data-index");
             tasks.splice(index, 1);
             saveTasksToLocalStorage();
             renderTasks();
+            updateSectionTitle()
         }
     });
+    
 
     // Edit a task
     taskList.addEventListener("click", function (e) {
@@ -232,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
             taskListDropdown.value = tasks[index].list;
             taskDueDate.value = tasks[index].dueDate || "";
 
-            taskAddButton.textContent = "Save Task";
+            taskAddButton.textContent = "Update Task";
             editingIndex = index;
         }
     });
@@ -240,16 +215,93 @@ document.addEventListener("DOMContentLoaded", function () {
     // Update task completion status
     taskList.addEventListener("change", function (e) {
         if (e.target.type === "checkbox") {
-            const index = e.target.dataset.index;
-            tasks[index].completed = e.target.checked;
-            saveTasksToLocalStorage();
-            renderTasks();
+            const taskItem = e.target.closest(".task-item");
+            const taskTitle = taskItem.querySelector(".task-text").textContent;
+    
+            // Find the correct task in the `tasks` array
+            const taskIndex = tasks.findIndex(task => task.title === taskTitle);
+    
+            if (taskIndex !== -1) {
+                tasks[taskIndex].completed = e.target.checked; // Toggle completion
+                saveTasksToLocalStorage();
+                updateTaskCounts();
+                updateSectionTitle(); 
+                renderTasks(); // 🔄 Re-render to move completed tasks correctly
+            }
         }
     });
+    
+    
+    function updateSectionTitle() {
+        if (sectionTitle.querySelector(".task-count")) {
+            sectionTitle.querySelector(".task-count").textContent = getFilteredTasks().length;
+        } else {
+            sectionTitle.innerHTML = `All Tasks <span class="task-count">${getFilteredTasks().length}</span>`;
+        }
+    }
+
+    // Load tasks from localStorage and render them
+    function loadTasksFromLocalStorage() {
+        tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        renderTasks();
+    }
+
+    function searchTasks() {
+        const query = searchInput.value.toLowerCase().trim();
+        const filteredTasks = tasks.filter(task => task.title.toLowerCase().includes(query));
+
+        // Update the task section title dynamically
+        if (query.length > 0) {
+            sectionTitle.innerHTML = `Search Results for "<span style="color: blue;">${query}</span>"`;
+        } else {
+            sectionTitle.textContent = currentView; // Reset title to current section
+        }
+
+        // Render only the searched tasks
+        renderFilteredTasks(filteredTasks);
+    }
+
+    // Function to render searched tasks
+    function renderFilteredTasks(filteredTasks) {
+        taskList.innerHTML = ""; // Clear the list
+
+        if (filteredTasks.length === 0) {
+            taskList.innerHTML = `<li class="no-tasks">No tasks found.</li>`;
+            return;
+        }
+
+        filteredTasks.forEach((task, index) => {
+            const taskItem = document.createElement("li");
+            taskItem.classList.add("task-item");
+            if (task.completed) taskItem.classList.add("completed-task");
+
+            taskItem.innerHTML = `
+                <div class="task-main">
+                    <input type="checkbox" ${task.completed ? "checked" : ""} data-index="${index}">
+                    <div class="task-info">
+                        <span class="task-text ${task.completed ? "completed-text" : ""}">${task.title}</span>
+                        <div class="task-meta">
+                            <span class="due-date">${task.dueDate || "No Date"}</span>
+                            <span class="list-tag">${task.list}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="edit-task" data-index="${index}">✏️Edit</button>
+                    <button class="delete-task" data-index="${index}">🗑</button>
+                </div>
+            `;
+
+            taskList.appendChild(taskItem);
+        });
+    }
+
+    // Event listener for search input
+    searchInput.addEventListener("input", searchTasks);
 
     // Initial render
+    loadTasksFromLocalStorage(); // Load and display stored tasks
     renderMenuTags();
     syncTaskTags();
-    renderTasks();
     renderLists();
 });

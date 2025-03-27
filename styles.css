@@ -77,7 +77,6 @@ body {
     background: #e0e0e0;
 }
 
-/* Active Menu Item */
 .menu-section ul .active {
     background: #d1e7ff;
     font-weight: bold;
@@ -91,7 +90,7 @@ body {
     font-size: 12px;
 }
 
-/* Main Task Section */
+/* Task Section */
 .task-section {
     width: 50%;
     padding: 20px;
@@ -104,189 +103,116 @@ body {
     gap: 10px;
 }
 
-
 /* Task List */
 .task-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
+
 .task-item {
     display: flex;
-    align-items: center; /* Align all elements in the center vertically */
-    justify-content: space-between; /* Space between task details and buttons */
+    align-items: center;
+    justify-content: space-between;
     padding: 10px;
     border-bottom: 1px solid #ddd;
-    gap: 10px; /* Add spacing between elements */
+    gap: 10px;
 }
 
-.task-main input[type="checkbox"] {
+/* Task Checkbox */
+.task-item input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.task-main input[type="checkbox"]:hover {
-    transform: scale(1.2);
-}
-.task-item .task-main {
-    display: flex;
-    align-items: center; /* Align checkbox and task info to the center */
-    gap: 10px; /* Add spacing between checkbox and task info */
-    flex-grow: 1; /* Allow task-main to take up remaining space */
-}
-
-.task-item input[type="checkbox"] {
     flex-shrink: 0;
 }
+
+.task-item input[type="checkbox"]:hover {
+    transform: scale(1.2);
+}
+
+/* Task Info */
+.task-item .task-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.task-item .task-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.task-item .task-text {
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.task-item .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #555;
+    margin-top: 5px;
+}
+
+.task-item .due-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.task-item .list-tag {
+    background: #ffcccc;
+    color: #b30000;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+/* Task Actions */
+.task-item .task-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-item .edit-task,
+.task-item .delete-task {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 15px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.task-item .edit-task {
+    color: #007bff;
+}
+
+.task-item .delete-task {
+    color: #b30000;
+}
+
+/* No Tasks Message */
 .no-tasks {
     text-align: center;
     color: #888;
     font-style: italic;
     padding: 20px;
 }
-.task-item .task-info {
-    display: flex;
-    flex-direction: column; /* Stack task text and meta info */
-    justify-content: flex-start; /* Align task text with buttons */
-}
 
-.task-item .task-text {
-    font-size: 16px;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: left; /* Ensure text starts from the left */
-    margin-bottom: 0; /* Remove extra spacing below the task title */
-    line-height: 1.5; /* Adjust line height for better alignment */
-}
-
-.task-item .task-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Add spacing between due date and list tag */
-    font-size: 12px;
-    color: #555;
-    margin-top: 5px; /* Push meta info below the task text */
-}
-
-.task-item .due-date {
-    display: flex;
-    align-items: center;
-    gap: 5px; /* Add spacing between icon and date */
-}
-
-.task-item .list-tag {
-    background: #ffcccc;
-    color: #b30000;
-    padding: 2px 6px;
-    border-radius: 5px;
-    font-size: 12px;
-}
-
-.task-item .task-actions {
-    display: flex;
-    align-items: center; /* Align buttons with task details */
-    gap: 10px; /* Add spacing between Edit and Delete buttons */
-}
-
-.task-item .edit-task,
-.task-item .delete-task {
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 15px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.task-item .edit-task {
-    color: #007bff;
-}
-
-.task-item .delete-task {
-    color: #b30000;
-}
-
-.task-item .task-main {
-    display: flex;
-    align-items: center; /* Align checkbox and task info to the center */
-    gap: 10px; /* Add spacing between checkbox and task info */
-    flex-grow: 1; /* Allow task-main to take up remaining space */
-}
-
-.task-item input[type="checkbox"] {
-    flex-shrink: 0;
-}
-
-.task-item .task-info {
-    display: flex;
-    flex-direction: column; /* Stack task text and meta info */
-    justify-content: flex-start; /* Align task text and meta info to the top */
-}
-
-.task-item .task-text {
-    font-size: 16px;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: left; /* Ensure text starts from the left */
-    margin-bottom: 5px; /* Add spacing below the task title */
-    display: flex;
-    align-items: center; /* Align text vertically with the select toggle */
-}
-
-.task-item .task-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Add spacing between due date and list tag */
-    font-size: 12px;
-    color: #555;
-    margin-left: 2px; /* Slightly indent the meta info */
-}
-
-.task-item .due-date {
-    display: flex;
-    align-items: center;
-    gap: 5px; /* Add spacing between icon and date */
-}
-
-.task-item .list-tag {
-    background: #ffcccc;
-    color: #b30000;
-    padding: 2px 6px;
-    border-radius: 5px;
-    font-size: 12px;
-}
-
-.task-item .task-actions {
-    display: flex;
-    align-items: center; /* Align buttons with task details */
-    gap: 10px; /* Add spacing between Edit and Delete buttons */
-}
-
-.task-item .edit-task,
-.task-item .delete-task {
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 15px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.task-item .edit-task {
-    color: #007bff;
-}
-
-.task-item .delete-task {
-    color: #b30000;
-}
-
-/* Task Section */
+/* Task Details */
 .task-details {
     width: 30%;
     padding: 20px;
@@ -325,7 +251,6 @@ body {
     color: #555;
 }
 
-/* List Dropdown */
 .task-details select {
     appearance: none;
     cursor: pointer;
@@ -337,7 +262,18 @@ body {
     background: #f9f9f9;
 }
 
-/* Task Actions (Buttons) */
+/* Completed Tasks */
+.completed-task {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.completed-text {
+    color: gray;
+    text-decoration: line-through;
+}
+
+/* Task Action Buttons */
 .task-actions {
     display: flex;
     justify-content: space-between;
