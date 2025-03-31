@@ -21,7 +21,6 @@ body {
 .container {
     display: flex;
     width: 100%;
-    max-width: 1200px;
     height: 100vh;
     background: white;
     border-radius: 10px;
@@ -103,6 +102,7 @@ body {
     align-items: center;
     gap: 10px;
 }
+
 
 /* Task List */
 .task-list {
