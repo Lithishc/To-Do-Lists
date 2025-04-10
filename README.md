@@ -16,7 +16,7 @@ This is a **To-Do List Application** built using **HTML, CSS, and JavaScript**. 
 ## 📁 Project Structure
 ```
 📦 To-Do List Project
-├── 📄 index.html      # Main HTML file
+├── 📄 main.html      # Main HTML file
 ├── 📄 styles.css      # CSS for styling
 ├── 📄 script.js       # JavaScript for app functionality
 └── 📄 README.md       # Project documentation
