@@ -157,6 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
         taskInput.value = "";
         taskDesc.value = "";
         taskDueDate.value = "";
+        searchInput.value = ""; // Clear the search input
         renderTasks();
     });
 
